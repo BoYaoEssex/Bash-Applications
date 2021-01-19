@@ -1,0 +1,113 @@
+# Read from the file file.txt and output the tenth line to stdout.
+lineNumber=0
+while [ $lineNumber -le 10 ]; do
+    read line
+    if [ -z "$line" ]; then
+        exit 0
+    fi
+    let 'lineNumber = lineNumber + 1'
+    if [ $lineNumber -eq 10 ]; then
+        echo $line
+        exit 0
+    fi
+done < file.txt
+
+<<COMMENT
+Input (in file.txt):
+Line 1
+Line 2
+Line 3
+Line 4
+Line 5
+Line 6
+Line 7
+Line 8
+Line 9
+Line 10
+
+Output:
+Line 10
+
+COMMENT
+
+
+
+
+# Read from the file file.txt and output all valid phone numbers to stdout.
+grep -e '\(^[0-9]\{3\}-[0-9]\{3\}-[0-9]\{4\}$\)' -e '\(^([0-9]\{3\})[ ]\{1\}[0-9]\{3\}-\([0-9]\{4\}\)$\)'  file.txt
+
+<<COMMENT
+valid phone number must appear in one of the following two formats: 
+(xxx) xxx-xxxx or xxx-xxx-xxxx. (x means a digit)
+
+Input (in file.txt):
+987-123-4567
+123 456 7890
+(123) 456-7890
+
+Output (valid numbers):
+987-123-4567
+(123) 456-7890
+
+Code explaination:
+grep: find out sepecific strings from input source
+-e: regexp that target strings matches
+^ : the beginning of a line
+$ : the end of a line
+{n} : match exactly n times of the previous regex
+(...) : group regex together
+
+COMMENT
+
+
+
+
+# Read from the file words.txt and output the word frequency list to stdout.
+cat words.txt | tr -s ' ' '\n' | sort | uniq --count | sort -r | awk '{print $2 " " $1}'
+
+<<COMMENT
+Input (in words.txt): 
+the day is sunny the the
+the sunny is is
+
+Output(words and their frequencies): 
+the 4
+is 3
+sunny 2
+day 1
+
+Code explaination:
+cat : to concatenate, create single or multiple files
+tr  : for truncating the input. cat words.txt | tr -s ' ' '\n' will
+      truncatie each whitespace(' ') and replace it with newline('\n')
+sort: This sort the input in ascending order so that uniq can find 
+      duplicatewords adjacently. 
+      cat words.txt | tr -s ' ' '\n' | sort    
+        day
+        is
+        is
+        is
+        sunny
+        sunny
+        the
+        the
+        the
+        the
+uniq --count: This command provides word frequency as "count word" format.
+Filter adjacent matching lines from INPUT (or standard input),
+writing to OUTPUT.  ~ cat words.txt | tr -s ' ' '\n' | sort | uniq --count
+          1 day
+          3 is
+          2 sunny
+          4 the
+sort -r: sorts the input in descending order.
+          4 the
+          3 is
+          2 sunny
+          1 day
+awk '{print $2 " " $1}
+awk formats the input given for each line. In our case, we want the 
+second column ($2) appears first and the first column ($1) appears second 
+separated by whitespace(" ")
+
+COMMENT
